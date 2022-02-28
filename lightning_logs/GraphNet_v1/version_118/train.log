@@ -1,0 +1,79 @@
+2022-02-23 23:14:44,227 [INFO] ariadne.train: Log directory lightning_logs\GraphNet_v1\version_118
+2022-02-23 23:14:44,227 [INFO] ariadne.train: GOT config: 
+======config======
+ # Parameters for Adam:
+# ==============================================================================
+Adam.lr = 0.0005
+
+# Parameters for experiment:
+# ==============================================================================
+experiment.criterion = @GraphNetWeightedBCE
+experiment.data_loader = @GraphDataLoader
+experiment.epochs = 100
+experiment.fp16_training = False
+experiment.metrics = \
+    [@ariadne.metrics.new_precision,
+     @ariadne.metrics.new_recall,
+     @ariadne.metrics.new_accuracy,
+     @ariadne.metrics.new_f1_score]
+experiment.model = @GraphNet_v1
+experiment.num_gpus = 2
+experiment.optimizer = @Adam
+experiment.random_seed = 42
+
+# Parameters for GraphDataLoader:
+# ==============================================================================
+GraphDataLoader.batch_size = 4
+GraphDataLoader.collate_fn = @graph_collate_fn
+GraphDataLoader.dataset = @GraphsDatasetMemory
+GraphDataLoader.n_train = 800
+GraphDataLoader.n_valid = 100
+
+# Parameters for GraphNet_v1:
+# ==============================================================================
+GraphNet_v1.hidden_dim = 128
+GraphNet_v1.input_dim = 5
+GraphNet_v1.n_iters = 1
+
+# Parameters for GraphNetWeightedBCE:
+# ==============================================================================
+GraphNetWeightedBCE.fake_weight = 0.555
+GraphNetWeightedBCE.real_weight = 2.3
+
+# Parameters for GraphsDatasetMemory:
+# ==============================================================================
+GraphsDatasetMemory.input_dir = './output/spd_sim_prepared'
+GraphsDatasetMemory.pin_mem = True
+ 
+========config=======
+2022-02-23 23:14:44,227 [INFO] ariadne.train: Setting random seed to 42
+2022-02-23 23:14:44,227 [INFO] ariadne.train: Create model for training
+2022-02-23 23:14:44,227 [INFO] ariadne.graph.dataset: [GraphDataset] Building dataset for folder './output/spd_sim_prepared'
+2022-02-23 23:14:44,242 [INFO] ariadne.graph.dataset: [GraphDataset] Total number of files: 900
+2022-02-23 23:14:44,242 [INFO] ariadne.train: TrainModel(
+  (model): GraphNet_v1(
+    (input_network): Sequential(
+      (0): Linear(in_features=5, out_features=128, bias=True)
+      (1): Tanh()
+    )
+    (edge_network): EdgeNetwork(
+      (network): Sequential(
+        (0): Linear(in_features=266, out_features=128, bias=True)
+        (1): Tanh()
+        (2): Linear(in_features=128, out_features=1, bias=True)
+        (3): Sigmoid()
+      )
+    )
+    (node_network): NodeNetwork(
+      (network): Sequential(
+        (0): Linear(in_features=399, out_features=128, bias=True)
+        (1): Tanh()
+        (2): Linear(in_features=128, out_features=128, bias=True)
+        (3): Tanh()
+      )
+    )
+  )
+  (criterion): GraphNetWeightedBCE()
+)
+2022-02-23 23:14:44,242 [WARNING] ariadne.train: Warning! You set num_gpus=2 but torch.cuda.is_available() is 'False'.Training will be on the CPU!
+2022-02-24 00:20:10,949 [INFO] ariadne.train: end training
